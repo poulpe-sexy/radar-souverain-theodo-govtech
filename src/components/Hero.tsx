@@ -38,30 +38,6 @@ const Hero: FC<HeroProps> = ({ categories, activeCategory, onCategoryChange, bli
         {blipCount} solutions françaises et européennes passées au crible par l'équipe
         Theodo GovTech pour le secteur public.
       </p>
-
-      <div className="flex overflow-x-auto gap-0 border-b border-grey-100 -mx-4 px-4 md:mx-0 md:px-0 thin-scroll">
-        <button
-          onClick={() => onCategoryChange(null)}
-          className={`relative flex-shrink-0 px-5 py-3 text-sm font-medium font-inter transition-colors whitespace-nowrap ${
-            activeCategory === null ? 'tab-active text-darkest' : 'text-grey-400 hover:text-grey-600'
-          }`}
-        >
-          Tous
-        </button>
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => onCategoryChange(cat.id)}
-            className={`relative flex-shrink-0 px-5 py-3 text-sm font-medium font-inter transition-colors whitespace-nowrap ${
-              activeCategory === cat.id
-                ? 'tab-active text-darkest'
-                : 'text-grey-400 hover:text-grey-600'
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>
     </div>
   </section>
 );

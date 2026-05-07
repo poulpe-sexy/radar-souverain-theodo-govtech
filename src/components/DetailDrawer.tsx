@@ -30,56 +30,52 @@ const DetailDrawer: FC<DetailDrawerProps> = ({ blip, rings, categories, onClose 
 
   return (
     <>
-      {/* Overlay */}
       <div
         className="fixed inset-0 bg-black/40 z-40 overlay-enter"
         onClick={onClose}
         aria-hidden="true"
       />
-
-      {/* Drawer */}
       <aside
         role="dialog"
         aria-modal="true"
         aria-label={`Détail : ${blip.name}`}
         className="fixed top-0 right-0 h-full w-full md:w-[480px] bg-white shadow-2xl z-50 flex flex-col drawer-enter"
       >
-        {/* Header */}
         <div
-          className="flex items-start justify-between p-6 border-b border-lightborder"
+          className="flex items-start justify-between p-6 border-b border-grey-100"
           style={{ borderTopColor: ring?.color, borderTopWidth: 4 }}
         >
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
               {ring && (
                 <span
-                  className="text-white text-xs font-bold px-3 py-1 rounded-full"
+                  className="text-white text-xs font-bold px-3 py-1 rounded-full font-inter"
                   style={{ backgroundColor: ring.color }}
                 >
                   {ring.label}
                 </span>
               )}
               {category && (
-                <span className="text-xs font-medium text-graytext bg-lightbg px-3 py-1 rounded-full border border-lightborder">
+                <span className="text-xs font-medium text-grey-500 bg-grey-050 px-3 py-1 rounded-full border border-grey-100 font-inter">
                   {category.label}
                 </span>
               )}
             </div>
             <div className="flex items-center gap-3">
               <span
-                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                style={{ backgroundColor: ring?.color ?? '#6B7280' }}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                style={{ backgroundColor: ring?.color ?? '#667085' }}
               >
                 {blip.id}
               </span>
-              <h2 className="text-xl font-bold text-darktext leading-tight truncate">
+              <h2 className="text-xl font-semibold text-darkest leading-tight truncate font-poppins">
                 {blip.name}
               </h2>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="ml-4 flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-lightbg hover:bg-lightborder transition-colors text-graytext hover:text-darktext"
+            className="ml-4 flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-grey-050 hover:bg-grey-100 transition-colors text-grey-400 hover:text-darkest"
             aria-label="Fermer"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -88,31 +84,29 @@ const DetailDrawer: FC<DetailDrawerProps> = ({ blip, rings, categories, onClose 
           </button>
         </div>
 
-        {/* Content */}
         <div className="flex-1 overflow-y-auto thin-scroll p-6 space-y-6">
           <section>
-            <h3 className="text-xs font-bold text-graytext uppercase tracking-wider mb-3">
+            <h3 className="text-xs font-bold text-grey-400 uppercase tracking-wider mb-3 font-inter">
               Description
             </h3>
-            <p className="text-darktext text-sm leading-relaxed">{blip.description}</p>
+            <p className="text-darkest text-sm leading-relaxed font-inter">{blip.description}</p>
           </section>
 
           <section>
-            <h3 className="text-xs font-bold text-graytext uppercase tracking-wider mb-3">
+            <h3 className="text-xs font-bold text-grey-400 uppercase tracking-wider mb-3 font-inter">
               Le point de vue Theodo GovTech
             </h3>
             <div
-              className="bg-lightbg rounded-lg p-4 border-l-4 text-sm leading-relaxed text-darktext"
-              style={{ borderLeftColor: '#1A1F4B' }}
+              className="bg-grey-050 rounded-lg p-4 border-l-4 text-sm leading-relaxed text-darkest font-inter"
+              style={{ borderLeftColor: '#1D2939' }}
             >
               {blip.pov}
             </div>
           </section>
         </div>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-lightborder bg-lightbg">
-          <p className="text-xs text-graytext text-center">
+        <div className="p-4 border-t border-grey-100 bg-grey-050">
+          <p className="text-xs text-grey-400 text-center font-inter">
             Radar Technologies Souveraines — Theodo GovTech · Mai 2026
           </p>
         </div>

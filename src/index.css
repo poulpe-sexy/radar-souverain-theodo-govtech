@@ -1,13 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  font-family: 'Inter', system-ui, 'Trebuchet MS', 'Calibri', sans-serif;
+  --color-darkest: #1D2939;
+  --color-dark: #294F73;
+  --color-secondary: #FF512C;
+  --color-secondary-light: #FFBFA8;
+  --color-grey-050: #F6F7F8;
+  --color-grey-100: #EAECF0;
+  --color-grey-200: #D0D5DD;
+  --color-grey-400: #98A2B3;
+  --color-grey-500: #667085;
+  --color-grey-600: #5A5E73;
+  --color-white: #FFFFFF;
+  --color-adopt: #0F8B5F;
+  --color-trial: #D4910F;
+  --color-assess: #7C6CC4;
+  --font-poppins: 'Poppins', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+
+  font-family: var(--font-inter);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #111827;
-  background-color: #F5F7FA;
+  color: var(--color-darkest);
+  background-color: var(--color-white);
 }
 
 body {
@@ -15,15 +34,10 @@ body {
   min-height: 100vh;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.6); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes pulseBlip {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.45); }
-  100% { transform: scale(1); }
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes drawerSlide {
@@ -36,10 +50,33 @@ body {
   to { opacity: 1; }
 }
 
+@keyframes pulseBlip {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.drawer-enter {
+  animation: drawerSlide 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.overlay-enter {
+  animation: overlayFade 0.2s ease-out;
+}
+
 .blip-enter {
   transform-origin: center;
   transform-box: fill-box;
-  animation: fadeIn 0.45s ease-out both;
+  animation: fadeIn 0.4s ease-out both;
 }
 
 .blip-pulse {
@@ -48,15 +85,55 @@ body {
   animation: pulseBlip 0.5s ease-out;
 }
 
-.drawer-enter {
-  animation: drawerSlide 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+/* Accordion transitions */
+.accordion-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease-in-out, margin-top 0.3s ease-in-out;
+  margin-top: 0;
 }
 
-.overlay-enter {
-  animation: overlayFade 0.2s ease-out;
+.accordion-content.is-open {
+  grid-template-rows: 1fr;
+  margin-top: 8px;
 }
 
-/* Scrollbar styling */
+.accordion-content > div {
+  overflow: hidden;
+}
+
+.accordion-icon .vertical {
+  transform-origin: center center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.accordion-open .accordion-icon .vertical {
+  transform: rotate(90deg);
+}
+
+/* Blip icon styles */
+.blip-dot {
+  transition: all 0.2s ease-in-out;
+}
+
+.blip-dot:hover {
+  background: radial-gradient(50% 50% at 50% 50%, #FFBFA8 2.4%, #FF512C 100%);
+}
+
+.blip-dot:hover .blip-num {
+  font-weight: 500;
+}
+
+.blip-dot.is-highlighted {
+  background-color: var(--color-darkest) !important;
+}
+
+.blip-dot.is-highlighted .blip-num {
+  color: var(--color-white);
+  font-weight: 600;
+}
+
+/* Scrollbar */
 .thin-scroll::-webkit-scrollbar {
   width: 6px;
 }
@@ -66,4 +143,49 @@ body {
 }
 .thin-scroll::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* Hero ellipses */
+.hero-ellipse {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Glass effect */
+.glass-card {
+  position: relative;
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background-color: rgb(246 247 248 / 0.6);
+  backdrop-filter: saturate(180%) blur(40px);
+  z-index: -1;
+}
+
+/* Tab active indicator */
+.tab-active {
+  position: relative;
+}
+.tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: var(--color-secondary);
+  border-radius: 3px 3px 0 0;
+}
+
+/* Category label arc text */
+.radar-section-label {
+  text-transform: uppercase;
+  font-weight: 300;
+  fill: #5A5E73;
 }

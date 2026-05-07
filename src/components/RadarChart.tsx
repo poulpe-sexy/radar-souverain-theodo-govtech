@@ -6,20 +6,23 @@ interface RadarChartProps {
   rings: RingMeta[];
   categories: CategoryMeta[];
   activeCategory: string | null;
-  activeRing: string | null;
+  highlightedBlipId: number | null;
   onBlipClick: (blip: Blip) => void;
 }
 
 const CX = 350;
 const CY = 350;
-const RING_RADII = [110, 220, 320]; // adopt, trial, assess outer edges
-const LABEL_RADIUS = 355;
-const NUM_SECTORS = 9;
-const SECTOR_ANGLE = (2 * Math.PI) / NUM_SECTORS;
-// Start at top (-90°) and rotate so first sector is at top-center
+const RING_RADII = [110, 220, 320];
+const LABEL_RADIUS = 348;
+const SECTOR_ANGLE = (2 * Math.PI) / 9;
 const START_ANGLE = -Math.PI / 2 - SECTOR_ANGLE / 2;
 
-// Deterministic jitter based on blip id to avoid layout shifts
+const RING_FILLS = [
+  'rgba(15, 139, 95, 0.07)',
+  'rgba(212, 145, 15, 0.06)',
+  'rgba(124, 108, 196, 0.05)',
+];
+
 function seededJitter(seed: number, range: number): number {
   const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453123;
   return (x - Math.floor(x) - 0.5) * 2 * range;
@@ -27,20 +30,6 @@ function seededJitter(seed: number, range: number): number {
 
 function polarToCartesian(angle: number, radius: number): [number, number] {
   return [CX + radius * Math.cos(angle), CY + radius * Math.sin(angle)];
-}
-
-function sectorPath(sectorIndex: number, innerR: number, outerR: number): string {
-  const startA = START_ANGLE + sectorIndex * SECTOR_ANGLE;
-  const endA = startA + SECTOR_ANGLE;
-  const [x1, y1] = polarToCartesian(startA, outerR);
-  const [x2, y2] = polarToCartesian(endA, outerR);
-  const [x3, y3] = polarToCartesian(endA, innerR);
-  const [x4, y4] = polarToCartesian(startA, innerR);
-  const largeArc = SECTOR_ANGLE > Math.PI ? 1 : 0;
-  if (innerR === 0) {
-    return `M ${CX} ${CY} L ${x1} ${y1} A ${outerR} ${outerR} 0 ${largeArc} 1 ${x2} ${y2} Z`;
-  }
-  return `M ${x4} ${y4} L ${x1} ${y1} A ${outerR} ${outerR} 0 ${largeArc} 1 ${x2} ${y2} L ${x3} ${y3} A ${innerR} ${innerR} 0 ${largeArc} 0 ${x4} ${y4} Z`;
 }
 
 function ringInnerRadius(ringIndex: number): number {
@@ -52,32 +41,34 @@ function blipPosition(blip: Blip, categoryIndex: number, ringIndex: number): [nu
   const outerR = RING_RADII[ringIndex];
   const midR = (innerR + outerR) / 2;
   const jitterR = (outerR - innerR) * 0.28;
-
   const sectorStart = START_ANGLE + categoryIndex * SECTOR_ANGLE;
-  const sectorEnd = sectorStart + SECTOR_ANGLE;
-  const midAngle = (sectorStart + sectorEnd) / 2;
+  const midAngle = (sectorStart + sectorStart + SECTOR_ANGLE) / 2;
   const jitterA = SECTOR_ANGLE * 0.28;
-
   const r = midR + seededJitter(blip.id * 3, jitterR);
   const a = midAngle + seededJitter(blip.id * 7, jitterA);
-
   return polarToCartesian(a, r);
 }
 
 const RING_IDS: Record<string, number> = { adopt: 0, trial: 1, assess: 2 };
 
-// Category sector colors (light tints)
-const SECTOR_TINTS = [
-  '#E8F4FD', '#EAF7F0', '#FDF6E8', '#F0EAF9',
-  '#FDF2EF', '#E8F4FD', '#EAF7F0', '#FDF6E8', '#F5F7FA',
-];
+const LABEL_LINES: Record<string, string[]> = {
+  'Cloud & Infrastructure': ['Cloud &', 'Infrastructure'],
+  'Communication & Messagerie': ['Communication', '& Messagerie'],
+  'Suite Collaborative': ['Suite', 'Collaborative'],
+  'Wiki & Documentation': ['Wiki &', 'Documentation'],
+  'Gestion de Projet': ['Gestion', 'de Projet'],
+  'IA & LLMs': ['IA & LLMs'],
+  'Cybersécurité': ['Cybersécurité'],
+  'Identité & Signature': ['Identité &', 'Signature'],
+  'Low-Code / No-Code': ['Low-Code /', 'No-Code'],
+};
 
 const RadarChart: FC<RadarChartProps> = ({
   blips,
   rings,
   categories,
   activeCategory,
-  activeRing,
+  highlightedBlipId,
   onBlipClick,
 }) => {
   const [tooltip, setTooltip] = useState<{ blip: Blip; x: number; y: number } | null>(null);
@@ -103,59 +94,35 @@ const RadarChart: FC<RadarChartProps> = ({
   }, [blips, categories]);
 
   const isActive = useCallback(
-    (blip: Blip) => {
-      if (activeCategory && blip.category !== activeCategory) return false;
-      if (activeRing && blip.ring !== activeRing) return false;
-      return true;
-    },
-    [activeCategory, activeRing]
+    (blip: Blip) => !activeCategory || blip.category === activeCategory,
+    [activeCategory]
   );
 
   return (
     <div className="relative w-full flex justify-center">
       <svg
         ref={svgRef}
-        viewBox="0 0 700 700"
+        viewBox="-70 -30 850 760"
         className="w-full max-w-[600px] h-auto"
         role="img"
         aria-label="Radar des technologies souveraines"
       >
         <defs>
           <filter id="blip-shadow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="1" stdDeviation="2" floodOpacity="0.25" />
+            <feDropShadow dx="0" dy="1" stdDeviation="2" floodOpacity="0.15" />
           </filter>
         </defs>
 
-        {/* Background */}
-        <circle cx={CX} cy={CY} r={RING_RADII[2] + 5} fill="#F0F4FF" />
-
-        {/* Sector fills */}
-        {categories.map((cat, i) => {
-          const highlighted = activeCategory === cat.id;
-          const dimmed = activeCategory !== null && activeCategory !== cat.id;
-          return (
-            <path
-              key={cat.id}
-              d={sectorPath(i, 0, RING_RADII[2])}
-              fill={SECTOR_TINTS[i % SECTOR_TINTS.length]}
-              opacity={dimmed ? 0.3 : highlighted ? 1 : 0.7}
-              className="transition-opacity duration-300"
-            />
-          );
-        })}
-
-        {/* Ring fills */}
-        {rings.map((ring, i) => (
+        {/* Ring fills — draw largest first */}
+        {[2, 1, 0].map((idx) => (
           <circle
-            key={ring.id}
+            key={`ring-fill-${idx}`}
             cx={CX}
             cy={CY}
-            r={RING_RADII[i]}
-            fill="none"
-            stroke={ring.color}
-            strokeWidth={activeRing === ring.id ? 3 : 1.5}
-            strokeOpacity={activeRing && activeRing !== ring.id ? 0.25 : 0.5}
-            className="transition-all duration-300"
+            r={RING_RADII[idx]}
+            fill={RING_FILLS[idx]}
+            stroke="#EAECF0"
+            strokeWidth="1"
           />
         ))}
 
@@ -164,38 +131,27 @@ const RadarChart: FC<RadarChartProps> = ({
           const angle = START_ANGLE + i * SECTOR_ANGLE;
           const [x2, y2] = polarToCartesian(angle, RING_RADII[2]);
           return (
-            <line
-              key={i}
-              x1={CX}
-              y1={CY}
-              x2={x2}
-              y2={y2}
-              stroke="#CBD5E1"
-              strokeWidth="1"
-              strokeDasharray="4 3"
-            />
+            <line key={`div-${i}`} x1={CX} y1={CY} x2={x2} y2={y2} stroke="#D0D5DD" strokeWidth="0.75" />
           );
         })}
 
-        {/* Ring labels (center dot for Adopt label) */}
+        {/* Ring labels */}
         {rings.map((ring, i) => {
           const r = i === 0 ? RING_RADII[0] / 2 : (RING_RADII[i] + RING_RADII[i - 1]) / 2;
-          // Place ring label at top of circle (angle = -PI/2)
-          const labelAngle = -Math.PI / 2;
-          const [lx, ly] = polarToCartesian(labelAngle, r);
+          const [lx, ly] = polarToCartesian(-Math.PI / 2, r);
           return (
             <text
-              key={ring.id}
+              key={`rl-${ring.id}`}
               x={lx}
               y={ly}
               textAnchor="middle"
               dominantBaseline="middle"
               fontSize="11"
-              fontWeight="700"
+              fontWeight="600"
               fill={ring.color}
-              fillOpacity={activeRing && activeRing !== ring.id ? 0.3 : 0.85}
-              className="pointer-events-none transition-opacity duration-300"
-              style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+              fillOpacity={0.65}
+              className="pointer-events-none"
+              style={{ fontFamily: 'Inter, sans-serif' }}
             >
               {ring.label.toUpperCase()}
             </text>
@@ -206,63 +162,28 @@ const RadarChart: FC<RadarChartProps> = ({
         {categories.map((cat, i) => {
           const midAngle = START_ANGLE + i * SECTOR_ANGLE + SECTOR_ANGLE / 2;
           const [lx, ly] = polarToCartesian(midAngle, LABEL_RADIUS);
-          const isTop = ly < CY - 10;
-          const isBottom = ly > CY + 10;
           let anchor: string;
-          if (lx < CX - 20) anchor = 'end';
-          else if (lx > CX + 20) anchor = 'start';
+          if (lx < CX - 30) anchor = 'end';
+          else if (lx > CX + 30) anchor = 'start';
           else anchor = 'middle';
-
           const dimmed = activeCategory !== null && activeCategory !== cat.id;
-          // Split label into two lines if needed
-          const labelParts = cat.label.split(' & ');
-          const line1 = labelParts[0] ?? cat.label;
-          const line2 = labelParts[1];
-
+          const parts = LABEL_LINES[cat.label] || [cat.label];
           return (
-            <g key={cat.id} className="transition-opacity duration-300" opacity={dimmed ? 0.3 : 1}>
-              {line2 ? (
-                <>
-                  <text
-                    x={lx}
-                    y={isTop ? ly - 7 : isBottom ? ly - 5 : ly - 7}
-                    textAnchor={anchor}
-                    fontSize="10"
-                    fontWeight="700"
-                    fill="#1A1F4B"
-                    className="pointer-events-none"
-                    style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
-                  >
-                    {line1}
-                  </text>
-                  <text
-                    x={lx}
-                    y={isTop ? ly + 7 : isBottom ? ly + 9 : ly + 7}
-                    textAnchor={anchor}
-                    fontSize="10"
-                    fontWeight="700"
-                    fill="#1A1F4B"
-                    className="pointer-events-none"
-                    style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
-                  >
-                    & {line2}
-                  </text>
-                </>
-              ) : (
+            <g key={cat.id} className="transition-opacity duration-300" opacity={dimmed ? 0.2 : 1}>
+              {parts.map((line, li) => (
                 <text
+                  key={li}
                   x={lx}
-                  y={ly}
+                  y={ly + (li - (parts.length - 1) / 2) * 13}
                   textAnchor={anchor}
                   dominantBaseline="middle"
-                  fontSize="10"
-                  fontWeight="700"
-                  fill="#1A1F4B"
-                  className="pointer-events-none"
-                  style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+                  className="radar-section-label pointer-events-none"
+                  fontSize="9.5"
+                  style={{ fontFamily: 'Poppins, sans-serif' }}
                 >
-                  {cat.label}
+                  {line}
                 </text>
-              )}
+              ))}
             </g>
           );
         })}
@@ -272,29 +193,25 @@ const RadarChart: FC<RadarChartProps> = ({
           const ring = rings.find((r) => r.id === blip.ring);
           const active = isActive(blip);
           const isPulsing = pulsingId === blip.id;
+          const isHighlighted = highlightedBlipId === blip.id;
 
           return (
             <g
               key={blip.id}
-              className={`blip-enter cursor-pointer`}
+              className="blip-enter cursor-pointer"
               style={{ animationDelay: `${idx * 18}ms` }}
-              opacity={active ? 1 : 0.12}
+              opacity={active ? 1 : 0.1}
               onClick={() => handleBlipClick(blip)}
-              onMouseEnter={(e) => {
+              onMouseEnter={() => {
                 if (!active) return;
                 const svg = svgRef.current;
                 if (!svg) return;
                 const rect = svg.getBoundingClientRect();
                 const scaleX = rect.width / 700;
                 const scaleY = rect.height / 700;
-                setTooltip({
-                  blip,
-                  x: x * scaleX + rect.left,
-                  y: y * scaleY + rect.top,
-                });
+                setTooltip({ blip, x: x * scaleX + rect.left, y: y * scaleY + rect.top });
               }}
               onMouseLeave={() => setTooltip(null)}
-              aria-label={`${blip.name} — ${ring?.label ?? blip.ring}`}
               role="button"
               tabIndex={active ? 0 : -1}
               onKeyDown={(e) => {
@@ -304,9 +221,9 @@ const RadarChart: FC<RadarChartProps> = ({
               <circle
                 cx={x}
                 cy={y}
-                r={14}
-                fill={ring?.color ?? '#6B7280'}
-                className={`transition-transform duration-200 ${isPulsing ? 'blip-pulse' : ''}`}
+                r={isHighlighted ? 16 : 14}
+                fill={isHighlighted ? '#1D2939' : (ring?.color ?? '#667085')}
+                className={`transition-all duration-200 ${isPulsing ? 'blip-pulse' : ''}`}
                 filter="url(#blip-shadow)"
               />
               <text
@@ -314,11 +231,11 @@ const RadarChart: FC<RadarChartProps> = ({
                 y={y}
                 textAnchor="middle"
                 dominantBaseline="central"
-                fontSize="10"
+                fontSize={isHighlighted ? '11' : '10'}
                 fontWeight="700"
                 fill="white"
                 className="pointer-events-none select-none"
-                style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+                style={{ fontFamily: 'Inter, sans-serif' }}
               >
                 {blip.id}
               </text>
@@ -326,39 +243,35 @@ const RadarChart: FC<RadarChartProps> = ({
           );
         })}
 
-        {/* Center logo */}
-        <circle cx={CX} cy={CY} r={18} fill="white" />
+        {/* Center */}
+        <circle cx={CX} cy={CY} r={16} fill="white" stroke="#EAECF0" strokeWidth="1" />
         <text
           x={CX}
           y={CY}
           textAnchor="middle"
           dominantBaseline="central"
-          fontSize="8"
+          fontSize="7"
           fontWeight="800"
-          fill="#1A1F4B"
+          fill="#1D2939"
           className="pointer-events-none select-none"
-          style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+          style={{ fontFamily: 'Inter, sans-serif', letterSpacing: '0.05em' }}
         >
           TGT
         </text>
       </svg>
 
-      {/* Tooltip (portal-style, positioned fixed) */}
       {tooltip && (
         <div
           className="fixed z-30 pointer-events-none"
           style={{ left: tooltip.x, top: tooltip.y, transform: 'translate(-50%, -120%)' }}
         >
-          <div className="bg-navy text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
+          <div className="bg-darkest text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-lg whitespace-nowrap font-inter">
             <span className="block">{tooltip.blip.name}</span>
-            <span className="text-blue-200 font-normal">
-              {(() => {
-                const r = ['adopt','trial','assess'].indexOf(tooltip.blip.ring);
-                return r === 0 ? 'Adopt' : r === 1 ? 'Trial' : 'Assess';
-              })()}
+            <span className="text-grey-400 font-normal text-[11px]">
+              {rings.find((r) => r.id === tooltip.blip.ring)?.label}
             </span>
           </div>
-          <div className="w-0 h-0 mx-auto border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-navy" />
+          <div className="w-0 h-0 mx-auto border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-darkest" />
         </div>
       )}
     </div>

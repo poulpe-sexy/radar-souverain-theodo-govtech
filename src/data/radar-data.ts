@@ -498,24 +498,6 @@ const radarData: RadarData = {
       pov: "Brique intéressante pour les projets nécessitant du chiffrement E2E sans reconstruire l'application. SI de santé, RH, outils de communication sensibles. L'intégration demande une réflexion architecturale sérieuse (gestion des clés, recovery).",
     },
     {
-      id: 47,
-      name: 'France Identité',
-      ring: 'adopt',
-      category: 'identity',
-      description:
-        "Programme national d'identité numérique porté par l'ANTS. Vérification d'identité à distance via la CNIe (carte nationale d'identité électronique), signature qualifiée, et à terme le portefeuille d'identité numérique européen (EUDI Wallet) prévu par eIDAS 2.",
-      pov: "Brique fondamentale de l'écosystème numérique public français. On intègre FranceConnect / France Identité dans la quasi-totalité de nos projets de services numériques citoyens. Le niveau de garantie « substantiel » débloque des cas d'usage impossibles avec FranceConnect simple. L'enjeu pour nous est l'accompagnement technique (SDK, parcours UX, gestion des cas d'erreur liés à la CNIe).",
-    },
-    {
-      id: 48,
-      name: 'Docaposte',
-      ring: 'adopt',
-      category: 'identity',
-      description:
-        "Tiers de confiance français majeur (filiale de La Poste) : identité numérique, signature électronique (simple, avancée, qualifiée), archivage à valeur probante (Digiposte), envoi recommandé électronique, hébergement HDS. Présent sur de nombreux marchés interministériels.",
-      pov: "Partenaire naturel de l'écosystème GovTech. On s'interface avec Docaposte pour la signature électronique dans les parcours de démarches en ligne, l'archivage à valeur probante et l'identité numérique. Pour la signature qualifiée dans les projets de dématérialisation, Docaposte est notre première recommandation.",
-    },
-    {
       id: 49,
       name: 'Yousign',
       ring: 'trial',

@@ -73,8 +73,8 @@ const BlipList: FC<BlipListProps> = ({
             </button>
 
             {/* Accordion body */}
-            <div className={`accordion-content ${isOpen ? 'is-open' : ''}`}>
-              <div className="pb-2">
+            {isOpen && (
+              <div className="mt-2">
                 {(['adopt', 'trial', 'assess'] as const).map((ringId) => {
                   const ringBlips = catBlips.filter((b) => b.ring === ringId);
                   if (ringBlips.length === 0) return null;
@@ -144,7 +144,7 @@ const BlipList: FC<BlipListProps> = ({
                   );
                 })}
               </div>
-            </div>
+            )}
 
             <div className="border-b border-grey-100" />
           </div>

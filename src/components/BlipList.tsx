@@ -5,20 +5,20 @@ interface BlipListProps {
   blips: Blip[];
   rings: RingMeta[];
   categories: CategoryMeta[];
-  activeCategory: string | null;
   onBlipClick: (blip: Blip) => void;
   highlightedBlipId: number | null;
   onBlipHover: (id: number | null) => void;
+  onCategoryToggle: (id: string | null) => void;
 }
 
 const BlipList: FC<BlipListProps> = ({
   blips,
   rings,
   categories,
-  activeCategory,
   onBlipClick,
   highlightedBlipId,
   onBlipHover,
+  onCategoryToggle,
 }) => {
   const [openCategories, setOpenCategories] = useState<Set<string>>(
     new Set(categories.map((c) => c.id))
@@ -27,19 +27,20 @@ const BlipList: FC<BlipListProps> = ({
   const toggleCategory = (id: string) => {
     setOpenCategories((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+        onCategoryToggle(null);
+      } else {
+        next.add(id);
+        onCategoryToggle(id);
+      }
       return next;
     });
   };
 
-  const visibleCategories = activeCategory
-    ? categories.filter((c) => c.id === activeCategory)
-    : categories;
-
   return (
     <div>
-      {visibleCategories.map((cat) => {
+      {categories.map((cat) => {
         const catBlips = blips.filter((b) => b.category === cat.id);
         if (catBlips.length === 0) return null;
         const isOpen = openCategories.has(cat.id);

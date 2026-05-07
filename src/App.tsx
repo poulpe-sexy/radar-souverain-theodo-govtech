@@ -8,7 +8,7 @@ import DetailDrawer from './components/DetailDrawer';
 
 const App: FC = () => {
   const [selectedBlip, setSelectedBlip] = useState<Blip | null>(null);
-  const [activeCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [highlightedBlipId, setHighlightedBlipId] = useState<number | null>(null);
 
   const handleBlipClick = useCallback((blip: Blip) => {
@@ -20,10 +20,6 @@ const App: FC = () => {
   }, []);
 
   const { meta, blips } = radarData;
-
-  const filteredCount = activeCategory
-    ? blips.filter((b) => b.category === activeCategory).length
-    : blips.length;
 
   return (
     <div className="min-h-screen bg-white">
@@ -78,7 +74,7 @@ const App: FC = () => {
               <h2 className="font-poppins font-semibold text-lg text-darkest">
                 Solutions
                 <span className="ml-2 text-grey-400 font-normal text-sm font-inter">
-                  ({filteredCount} / {blips.length})
+                  ({blips.length})
                 </span>
               </h2>
             </div>
@@ -86,10 +82,10 @@ const App: FC = () => {
               blips={blips}
               rings={meta.rings}
               categories={meta.categories}
-              activeCategory={activeCategory}
               onBlipClick={handleBlipClick}
               highlightedBlipId={highlightedBlipId}
               onBlipHover={setHighlightedBlipId}
+              onCategoryToggle={setActiveCategory}
             />
           </div>
         </div>

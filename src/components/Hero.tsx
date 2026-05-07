@@ -1,14 +1,10 @@
 import { type FC } from 'react';
-import type { CategoryMeta } from '../data/radar-data';
 
 interface HeroProps {
-  categories: CategoryMeta[];
-  activeCategory: string | null;
-  onCategoryChange: (id: string | null) => void;
   blipCount: number;
 }
 
-const Hero: FC<HeroProps> = ({ categories, activeCategory, onCategoryChange, blipCount }) => (
+const Hero: FC<HeroProps> = ({ blipCount }) => (
   <section className="relative overflow-hidden bg-grey-050 pt-10 pb-0">
     <div
       className="hero-ellipse"

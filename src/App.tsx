@@ -8,7 +8,7 @@ import DetailDrawer from './components/DetailDrawer';
 
 const App: FC = () => {
   const [selectedBlip, setSelectedBlip] = useState<Blip | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory] = useState<string | null>(null);
   const [highlightedBlipId, setHighlightedBlipId] = useState<number | null>(null);
 
   const handleBlipClick = useCallback((blip: Blip) => {
@@ -19,10 +19,6 @@ const App: FC = () => {
     setSelectedBlip(null);
   }, []);
 
-  const handleCategoryChange = useCallback((id: string | null) => {
-    setActiveCategory(id);
-  }, []);
-
   const { meta, blips } = radarData;
 
   const filteredCount = activeCategory
@@ -31,12 +27,7 @@ const App: FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Hero
-        categories={meta.categories}
-        activeCategory={activeCategory}
-        onCategoryChange={handleCategoryChange}
-        blipCount={blips.length}
-      />
+      <Hero blipCount={blips.length} />
 
       <main className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-10">
         <div className="flex flex-col lg:flex-row gap-10 items-start">

@@ -162,7 +162,7 @@ const RadarChart: FC<RadarChartProps> = ({
         {categories.map((cat, i) => {
           const midAngle = START_ANGLE + i * SECTOR_ANGLE + SECTOR_ANGLE / 2;
           const [lx, ly] = polarToCartesian(midAngle, LABEL_RADIUS);
-          let anchor: string;
+          let anchor: 'start' | 'middle' | 'end';
           if (lx < CX - 30) anchor = 'end';
           else if (lx > CX + 30) anchor = 'start';
           else anchor = 'middle';

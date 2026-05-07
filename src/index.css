@@ -197,6 +197,6 @@ body {
 /* Category label arc text */
 .radar-section-label {
   text-transform: uppercase;
-  font-weight: 300;
+  font-weight: 600;
   fill: #5A5E73;
 }

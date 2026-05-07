@@ -97,8 +97,7 @@ const DetailDrawer: FC<DetailDrawerProps> = ({ blip, rings, categories, onClose 
               Le point de vue Theodo GovTech
             </h3>
             <div
-              className="bg-grey-050 rounded-lg p-4 border-l-4 text-sm leading-relaxed text-darkest font-inter"
-              style={{ borderLeftColor: '#1D2939' }}
+              className="bg-grey-050 rounded-lg p-4 text-sm leading-relaxed text-darkest font-inter"
             >
               {blip.pov}
             </div>

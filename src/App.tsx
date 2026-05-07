@@ -86,6 +86,7 @@ const App: FC = () => {
               highlightedBlipId={highlightedBlipId}
               onBlipHover={setHighlightedBlipId}
               onCategoryToggle={setActiveCategory}
+              focusCategoryId={selectedBlip?.category ?? null}
             />
           </div>
         </div>

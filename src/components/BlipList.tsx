@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react';
+import { useState, useEffect, type FC } from 'react';
 import type { Blip, RingMeta, CategoryMeta } from '../data/radar-data';
 
 interface BlipListProps {
@@ -9,6 +9,7 @@ interface BlipListProps {
   highlightedBlipId: number | null;
   onBlipHover: (id: number | null) => void;
   onCategoryToggle: (id: string | null) => void;
+  focusCategoryId: string | null;
 }
 
 const BlipList: FC<BlipListProps> = ({
@@ -19,10 +20,17 @@ const BlipList: FC<BlipListProps> = ({
   highlightedBlipId,
   onBlipHover,
   onCategoryToggle,
+  focusCategoryId,
 }) => {
   const [openCategories, setOpenCategories] = useState<Set<string>>(
     new Set(categories.map((c) => c.id))
   );
+
+  useEffect(() => {
+    if (focusCategoryId && !openCategories.has(focusCategoryId)) {
+      setOpenCategories((prev) => new Set(prev).add(focusCategoryId));
+    }
+  }, [focusCategoryId]);
 
   const toggleCategory = (id: string) => {
     setOpenCategories((prev) => {

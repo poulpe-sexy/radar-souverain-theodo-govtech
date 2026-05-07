@@ -52,8 +52,13 @@ body {
 
 @keyframes pulseBlip {
   0% { transform: scale(1); }
-  50% { transform: scale(1.5); }
+  30% { transform: scale(2.2); }
   100% { transform: scale(1); }
+}
+
+@keyframes rippleRing {
+  0% { r: 14; opacity: 0.7; stroke-width: 3; }
+  100% { r: 50; opacity: 0; stroke-width: 0.5; }
 }
 
 @keyframes fadeIn {
@@ -82,7 +87,12 @@ body {
 .blip-pulse {
   transform-origin: center;
   transform-box: fill-box;
-  animation: pulseBlip 0.5s ease-out;
+  animation: pulseBlip 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.blip-ripple {
+  animation: rippleRing 0.7s ease-out forwards;
+  pointer-events: none;
 }
 
 /* Accordion transitions */

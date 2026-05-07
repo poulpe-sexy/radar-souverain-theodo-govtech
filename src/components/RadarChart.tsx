@@ -73,15 +73,24 @@ const RadarChart: FC<RadarChartProps> = ({
 }) => {
   const [tooltip, setTooltip] = useState<{ blip: Blip; x: number; y: number } | null>(null);
   const [pulsingId, setPulsingId] = useState<number | null>(null);
+  const [ripple, setRipple] = useState<{ x: number; y: number; color: string } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
   const handleBlipClick = useCallback(
     (blip: Blip) => {
+      const ring = rings.find((r) => r.id === blip.ring);
+      const categoryIndex = categories.findIndex((c) => c.id === blip.category);
+      const ringIndex = RING_IDS[blip.ring] ?? 2;
+      const [bx, by] = blipPosition(blip, categoryIndex, ringIndex);
       setPulsingId(blip.id);
-      setTimeout(() => setPulsingId(null), 500);
+      setRipple({ x: bx, y: by, color: ring?.color ?? '#667085' });
+      setTimeout(() => {
+        setPulsingId(null);
+        setRipple(null);
+      }, 700);
       onBlipClick(blip);
     },
-    [onBlipClick]
+    [onBlipClick, rings, categories]
   );
 
   const blipPositions = useMemo(() => {
@@ -242,6 +251,19 @@ const RadarChart: FC<RadarChartProps> = ({
             </g>
           );
         })}
+
+        {/* Click ripple */}
+        {ripple && (
+          <circle
+            key={`ripple-${Date.now()}`}
+            cx={ripple.x}
+            cy={ripple.y}
+            r={14}
+            fill="none"
+            stroke={ripple.color}
+            className="blip-ripple"
+          />
+        )}
 
         {/* Center */}
         <circle cx={CX} cy={CY} r={16} fill="white" stroke="#EAECF0" strokeWidth="1" />

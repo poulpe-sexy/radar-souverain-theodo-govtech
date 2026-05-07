@@ -22,9 +22,7 @@ const BlipList: FC<BlipListProps> = ({
   onCategoryToggle,
   focusCategoryId,
 }) => {
-  const [openCategories, setOpenCategories] = useState<Set<string>>(
-    new Set(categories.map((c) => c.id))
-  );
+  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (focusCategoryId && !openCategories.has(focusCategoryId)) {

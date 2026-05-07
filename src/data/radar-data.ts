@@ -238,12 +238,66 @@ const radarData: RadarData = {
     },
     {
       id: 18,
-      name: 'La Suite Numérique',
+      name: 'Tchap',
       ring: 'adopt',
+      category: 'communication',
+      description:
+        "Messagerie instantanée et sécurisée de l'État, utilisée par plus de 600 000 agents. Basée sur le protocole ouvert Matrix et le client Element, elle permet de communiquer de manière instantanée dans un environnement sécurisé, que ce soit au sein des ministères, des collectivités territoriales, des établissements scolaires ou des hôpitaux. Les appels de groupe sont désormais disponibles, ainsi que le partage d'écran. Une application Windows est en test depuis octobre 2025, et une nouvelle version mobile plus fluide est en préparation.",
+      pov: "Tchap est le « Slack du service public » — c'est notre canal de communication par défaut avec tous nos interlocuteurs dans les administrations. L'effet réseau est massif : tout agent public disposant d'un email .gouv.fr peut y accéder sans friction. Avec 600 000 inscrits et une obligation d'usage imposée aux ministères depuis septembre 2025, c'est un incontournable de tout projet GovTech. On le préconise systématiquement comme canal projet. Les limites restent les intégrations (bots, webhooks) moins riches que Slack/Teams, et une UX mobile encore en retrait — mais la nouvelle version mobile devrait combler l'écart. Pour les échanges à haute sensibilité, Olvid reste préférable.",
+    },
+    {
+      id: 54,
+      name: 'Visio',
+      ring: 'adopt',
+      category: 'communication',
+      description:
+        "Solution de visioconférence souveraine proposée par la DINUM, accessible gratuitement aux agents publics via ProConnect. Hébergée en France sur infrastructure SecNumCloud, elle repose sur des briques open source (LiveKit). L'un des principaux apports de Visio est la transcription asynchrone : à la fin d'une réunion, l'outil génère automatiquement une transcription et l'envoie à l'agent. Plus de 1 000 comptes rendus ont déjà été produits en un seul mois. La DINUM annonçait 100 000 utilisateurs de Visio en février 2026. La généralisation à l'ensemble des services de l'État est prévue d'ici 2027.",
+      pov: "Visio est la bonne surprise de La Suite. La transcription automatique + synthèse IA est un game-changer pour la productivité des agents — on a vu des retours enthousiastes chez nos clients. L'hébergement SecNumCloud en fait la visio de référence pour les réunions impliquant des données sensibles (hors Diffusion Restreinte, où Tixeo s'impose). Sur nos projets, on l'utilise de plus en plus pour les ateliers de co-conception avec les agents, en remplacement de Meet/Teams. L'intégration avec Docs (transcription → compte rendu) crée un flux de travail très efficace. La limite : pas encore d'intégration calendrier native, et la capacité maximale de 350 participants peut être contraignante pour les grands webinaires.",
+    },
+    {
+      id: 55,
+      name: 'Docs',
+      ring: 'trial',
       category: 'collaborative',
       description:
-        "Programme de la DINUM visant à fournir aux agents publics un ensemble d'outils collaboratifs souverains : Tchap (messagerie), Webconf (visioconférence), France Transfert (envoi de fichiers), Resana (partage documentaire), webmail, et progressivement des outils d'édition collaborative et de gestion d'agenda. Hébergée sur l'infrastructure de l'État.",
-      pov: "Socle de référence pour l'environnement de travail de l'agent public. Sur nos projets, on s'appuie systématiquement sur ses briques quand elles existent. L'enjeu pour nous est l'intégration : comment les applications métier que nous développons s'articulent avec la Suite (SSO AgentConnect, APIs, notifications Tchap). La Suite progresse vite mais reste fonctionnellement en retrait par rapport à Google Workspace — c'est un investissement de long terme qu'il faut encourager et accompagner.",
+        "Solution de prise de notes collaboratives de La Suite. Les agents peuvent y réfléchir, préciser une idée, rédiger un compte rendu ou construire une base de connaissances. L'outil privilégie le contenu sur la mise en forme. Il intègre un assistant IA qui reformule les phrases, résume des documents entiers ou génère des contenus adaptés aux besoins des agents. Docs est hébergé sur une infrastructure SecNumCloud et peut être utilisé pour des données sensibles.",
+      pov: "Docs est la brique de La Suite qui progresse le plus vite en termes de fonctionnalités. L'intégration IA (résumé, reformulation via Mistral AI) est un vrai différenciant par rapport à un simple éditeur collaboratif. On le positionne en Trial car l'outil est encore orienté « prise de notes » plutôt que « document structuré » — il ne remplace pas Google Docs ou Word pour la rédaction de livrables formels. Mais pour les comptes rendus de réunion (surtout couplé à Visio), la capitalisation projet et les notes d'ateliers, c'est excellent. On le recommande sur tous nos projets avec des interlocuteurs publics. Le couple Visio + Docs est le workflow le plus convaincant de La Suite.",
+    },
+    {
+      id: 56,
+      name: 'Grist',
+      ring: 'trial',
+      category: 'lowcode',
+      description:
+        "Outil collaboratif destiné aux agents des ministères, préfectures et collectivités locales, à l'intersection d'un tableur collaboratif, d'une base de données et d'une application sans code. Grist est la brique de La Suite qui connaît une croissance spectaculaire. Open source (Grist Core), il permet de structurer des données, créer des vues personnalisées, des formulaires et des dashboards — sans écrire de code.",
+      pov: "Grist est la pépite méconnue de La Suite. C'est un Airtable souverain, et c'est exactement ce dont les agents publics ont besoin pour digitaliser leurs processus métier sans passer par un projet IT formel : suivi d'activité, registres, tableaux de bord, formulaires de collecte. On le positionne en Trial car la maturité est bonne (produit open source éprouvé) mais l'adoption dans les administrations est encore en montée en charge. Pour les projets Theodo GovTech, Grist est une brique intéressante en complément de nos développements : plutôt que de coder un backoffice de gestion pour un besoin simple, on peut orienter le client vers Grist.",
+    },
+    {
+      id: 57,
+      name: 'Fichiers',
+      ring: 'trial',
+      category: 'collaborative',
+      description:
+        "Outil de centralisation et de partage de fichiers de La Suite. C'est la brique « Drive » destinée à remplacer progressivement Resana pour le stockage et le partage documentaire. Côté Drive, Osmose a été décommissionné et Resana laissera probablement peu à peu la place à Fichiers.",
+      pov: "Fichiers est la brique qui manquait pour que La Suite devienne une véritable alternative à Google Drive / OneDrive. On le positionne en Trial car l'outil est encore en phase de montée en charge — Resana reste le Drive le plus utilisé dans l'administration. L'enjeu sera la migration : les agents qui ont des centaines de documents sur Resana devront basculer progressivement. Sur nos projets, on utilise encore Resana pour les échanges documentaires avec les administrations, mais on surveille la roadmap de Fichiers pour anticiper la transition.",
+    },
+    {
+      id: 58,
+      name: 'France Transfert',
+      ring: 'trial',
+      category: 'collaborative',
+      description:
+        "Outil d'envoi et de réception de fichiers volumineux pensé pour les besoins de l'administration. France Transfert totalise plus de 350 000 échanges de fichiers volumineux. Le service est accessible sans inscription pour les destinataires, ce qui en fait un outil pratique pour les échanges avec des partenaires externes.",
+      pov: "France Transfert est un outil simple mais redoutablement utile. C'est le WeTransfer souverain, et on l'utilise systématiquement sur nos projets pour envoyer des livrables volumineux à nos clients publics (maquettes, exports de données, packages de déploiement). Le fait que le destinataire n'ait pas besoin de compte est un avantage décisif. On le positionne en Trial (et pas Adopt) car les fonctionnalités restent basiques (envoi ponctuel, pas de stockage persistant) et il ne couvre qu'un cas d'usage limité. Mais dans ce cas d'usage, il est parfait.",
+    },
+    {
+      id: 59,
+      name: "L'Assistant (Mistral AI)",
+      ring: 'assess',
+      category: 'ai',
+      description:
+        "10 000 agents sont en train de le tester avant un déploiement complet prévu début 2026. L'Assistant intervient déjà dans Docs, où il reformule et résume les textes, et dans Visio, où il génère les transcriptions et bientôt les synthèses. Développé en partenariat avec Mistral AI, il est conçu comme le « fil invisible » qui connecte toutes les briques de La Suite. À terme, il pourra interroger des documents existants, retrouver l'essentiel d'une réunion passée ou agir directement sur d'autres applications de la Suite.",
+      pov: "L'Assistant est le projet le plus stratégique de La Suite à moyen terme. L'ambition — un assistant IA transversal qui connecte messagerie, visio, docs et données — est exactement ce que Microsoft fait avec Copilot dans M365. Le fait que ce soit basé sur Mistral AI et hébergé souverainement est un argument massif. On le positionne en Assess car l'expérimentation est encore en cours (8 ministères, jusqu'à juin 2026) et les performances en conditions réelles restent à valider. Mais pour Theodo GovTech, c'est un sujet à suivre de très près : si l'Assistant atteint une maturité suffisante, il pourrait devenir la porte d'entrée IA de l'État — et nos projets d'IA dans le public devront s'articuler avec.",
     },
     {
       id: 19,
